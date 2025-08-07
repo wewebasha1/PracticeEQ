@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="OZszeO" name="PracticeEQ" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3">
   <MAINGROUP id="OO4Mfp" name="PracticeEQ">
     <GROUP id="{ADE5348F-65E5-DB30-437A-CCCAA71F0BED}" name="Source">
       <FILE id="SZnguJ" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -32,7 +32,7 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="PracticeEQ"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="PracticeEQ" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="PracticeEQ"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

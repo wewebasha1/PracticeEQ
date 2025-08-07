@@ -166,7 +166,8 @@ bool PracticeEQAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PracticeEQAudioProcessor::createEditor()
 {
-    return new PracticeEQAudioProcessorEditor (*this);
+    //return new PracticeEQAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -181,6 +182,74 @@ void PracticeEQAudioProcessor::setStateInformation (const void* data, int sizeIn
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout PracticeEQAudioProcessor::createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "HI Freq",
+        "HI Freq",
+        juce::NormalisableRange<float>(800.f, 16000.f, 1.f, 1.f),
+        800.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "HI-MID Freq",
+        "HI-MID Freq",
+        juce::NormalisableRange<float>(400.f, 8000.f, 1.f, 1.f),
+        400.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "LO-MID Freq",
+        "LO-MID Freq",
+        juce::NormalisableRange<float>(200.f, 4000.f, 1.f, 1.f),
+        200.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "LOW Freq", 
+        "LOW Freq", 
+        juce::NormalisableRange<float>(40.f, 800.f, 1.f, 1.f), 
+        40.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "HP Freq",
+        "HP Freq",
+        juce::NormalisableRange<float>(25.f, 2750.f, 1.f, 1.f),
+        25.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "LP Freq",
+        "LP Freq",
+        juce::NormalisableRange<float>(160.f, 20000.f, 1.f, 1.f),
+        160.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "HI Gain",
+        "HI Gain",
+        juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f),
+        0.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "HI-MID Gain",
+        "HI-MID Gain",
+        juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f),
+        0.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "LO-MID Gain",
+        "LO-MID Gain",
+        juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f),
+        0.f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "LOW Gain",
+        "LOW Gain",
+        juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f),
+        0.f));
+
+    return layout;
+    
 }
 
 //==============================================================================
