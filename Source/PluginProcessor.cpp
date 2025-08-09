@@ -95,6 +95,19 @@ void PracticeEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+
+    juce::dsp::ProcessSpec spec;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = 1;
+    spec.sampleRate = sampleRate;
+
+    leftChain.prepare(spec);
+    rightChain.prepare(spec);
+
+    auto chainSettings = getChainSettings(apvts);
+
+    //function below needs a Quality parameter I think
+    //auto hiCoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, chainSettings.hiFreq, );
 }
 
 void PracticeEQAudioProcessor::releaseResources()
@@ -144,18 +157,16 @@ void PracticeEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+    juce::dsp::AudioBlock<float> block(buffer);
 
-        // ..do something to the data...
-    }
+    auto leftBlock = block.getSingleChannelBlock(0);
+    auto rightBlock = block.getSingleChannelBlock(1);
+
+    juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock);
+    juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock);
+
+    leftChain.process(leftContext);
+    rightChain.process(rightContext);
 }
 
 //==============================================================================
@@ -182,6 +193,25 @@ void PracticeEQAudioProcessor::setStateInformation (const void* data, int sizeIn
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts)
+{
+    ChainSettings settings;
+
+    settings.hiFreq = apvts.getRawParameterValue("HI Freq")->load();
+    settings.hiMidFreq = apvts.getRawParameterValue("HI-MID Freq")->load();
+    settings.loMidFreq = apvts.getRawParameterValue("LO-MID Freq")->load();
+    settings.lowFreq = apvts.getRawParameterValue("LOW Freq")->load();
+    settings.hpFreq = apvts.getRawParameterValue("HP Freq")->load();
+    settings.lpFreq = apvts.getRawParameterValue("LP Freq")->load();
+
+    settings.hiGain = apvts.getRawParameterValue("HI Gain")->load();
+    settings.hiMidGain = apvts.getRawParameterValue("HI-MID Gain")->load();
+    settings.loMidGain = apvts.getRawParameterValue("LO-MID Gain")->load();
+    settings.lowGain = apvts.getRawParameterValue("LOW Gain")->load();
+
+    return settings;
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout PracticeEQAudioProcessor::createParameterLayout()

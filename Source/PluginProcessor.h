@@ -10,6 +10,17 @@
 
 #include <JuceHeader.h>
 
+struct ChainSettings
+{
+    float hiFreq{ 0 }, hiGain{ 0 };
+    float hiMidFreq{ 0 }, hiMidGain{ 0 };
+    float loMidFreq{ 0 }, loMidGain{ 0 };
+    float lowFreq{ 0 }, lowGain{ 0 };
+    float lpFreq{ 0 }, hpFreq{ 0 };
+};
+
+ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts);
+
 //==============================================================================
 /**
 */
@@ -57,6 +68,15 @@ public:
     juce::AudioProcessorValueTreeState apvts {*this, nullptr, "Paramters", createParameterLayout()};
 
 private:
+    using Filter = juce::dsp::IIR::Filter<float>;
+
+    using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>;
+
+    using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, CutFilter>;
+
+    MonoChain leftChain, rightChain;
+
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PracticeEQAudioProcessor)
 };
